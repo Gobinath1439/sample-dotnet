@@ -2,7 +2,7 @@ using System.Net;
 using Elsa.Activities.Http;
 using Elsa.Builders;
 
-namespace ElsaQuickstarts.WebApp.HelloWorld
+namespace ElsaQuickstarts.WebApp.HelloWorld/hello Everyone
 {
     /// <summary>
     /// A workflow that is triggered when HTTP requests are made to /hello-world and writes a response.
@@ -13,7 +13,7 @@ namespace ElsaQuickstarts.WebApp.HelloWorld
         {
             builder
                 .HttpEndpoint("/hello-world")
-                .WriteHttpResponse(HttpStatusCode.OK, "<h1>Hello World!</h1>", "text/html");
+                .WriteHttpResponse(HttpStatusCode.OK, "<h1>Hello World!/HelloEveryone</h1>", "text/html");
         }
     }
 }
