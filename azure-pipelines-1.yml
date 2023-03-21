@@ -4,7 +4,8 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 # Authenticate Azure DevOps NuGet feed
- - task: NuGetAuthenticate@1
+
+- task: NuGetAuthenticate@1
   displayName: 'Authenticate Azure DevOps NuGet feed'
 
 # Restore project
