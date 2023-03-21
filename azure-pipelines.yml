@@ -28,7 +28,7 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
--task: UseDotNet@2
+- task: UseDotNet@2
   inputs:
     packageType: 'sdk'
     version: '1.214.0'
