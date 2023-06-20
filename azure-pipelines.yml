@@ -1,0 +1,52 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: windows-latest
+
+Variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreCLI@2
+inputs:
+  command: 'restore'
+  feedsToUse: 'select'
+  vstsFeed: 'my-vsts-feed'
+
+- task: DonetCoreCLI@2
+  inputs:
+    command: 'build'
+    arguments: '--configuration $(buildConfiguration)'
+  displayName: 'dotnet build $(buildConfiguration)'
+
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: 'test'
+    arguments: '--configuration $(buildConfiguration) --collect:"XPlate code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
+    publishTestResults: true
+    projects: 'MyTestLibrary"
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command:  publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+
+- task: publishPipelineArtifact@1
+  inputs:  
+    targetPath: 'S(build.ArtifactStagingDirectory)'
+    artifactName: 'myWebsiteName'
+
+
+
+
