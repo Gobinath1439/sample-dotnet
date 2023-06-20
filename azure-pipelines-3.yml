@@ -3,3 +3,70 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+trigger::
+- main
+
+variables:
+  IISWebsiteName: 'mywebsite'
+
+resources:
+ pipelines:
+     - pipeline: 'buildPipeline'
+       project: 'mywebsite'
+       source: 'Build pipeline'
+       branch: 'main'
+
+stages: 
+  - stage: DeployWebsite
+    displayName: 'Deploy website'
+    pool:
+      vmImage: windows-latest
+
+    jobs:
+    - deployment: DeployWebsite
+      displayName: 'sample website'
+      environment: 'windows 11 server.DAV'
+      strategy:
+       runOnce:
+           deploy:
+            steps:
+                - checkout: none
+
+                - download: 'buildpipeline'
+                  name: 'DownloadBuildArtifacts'
+                  displayName: 'Download Build Artifacts'
+                  artifact: '.Net WebApp'
+
+                - task: IISWebAPPManagementOnMachineGroup@0
+                  name: 'StopIIS'
+                  displayName: 'Stop IIS website'
+                  inputs:
+                    IISDeploymentType: 'IISWebsite'
+                    ActionIISWebsite: 'StopWebsite'
+                    StartStopWebsiteName: '${{ varibles.IISWebsiteName}}'
+
+               - script: echo $(pipeline.Workspace)\buildPipeline\mywebsite\RoundTheCode.mywebsite
+               
+                - task: IISWebAppDeploymentOnMachineGroup@0 
+                  name: 'DeployIIS'
+                  displayName: 'Start IIS website'
+                  inputs:
+                    websiteName: '${{ variable.IISWebsiteName }}'
+                    package: '$(pipeline.workspace)\buildPipeline\mywebsite\RoundTheCode.mywebsite'
+                    TakeAppOfflineFlag: true
+
+                - task: IISWebAppDeploymentOnMachineGroup@0 
+                  name: 'StartIIS'
+                  displayName: 'Deploy IIS website'
+                  inputs:
+                    IISDeploymentType: 'IIS Website'
+                    ActionIISWebsite: 'StartWebsite'
+                    StartStopWebsiteName: '${{ variables.IISWebsiteName }}'
+
+
+               
+
+
+
+  
+
